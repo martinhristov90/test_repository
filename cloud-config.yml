@@ -1,0 +1,29 @@
+#cloud-config
+hostname: martitest
+
+system_info:
+  default_user:
+    name: ops
+    gecos: "Operations User"
+    primary-group: ops
+    shell: /bin/bash
+    lock_passwd: true
+    sudo: ['ALL=(ALL) NOPASSWD:ALL']
+
+
+package_upgrade: true
+apt:
+  sources:
+    docker.list:
+      source: "deb [arch=amd64] https://download.docker.com/linux/ubuntu $RELEASE stable"
+      keyid: 0EBFCD88
+
+packages:
+  - docker-ce
+
+power_state:
+  delay: "now"
+  mode: reboot
+  message: Reboot after installing Docker
+  condition: true
+
