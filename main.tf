@@ -22,7 +22,7 @@ resource "aws_instance" "web" {
   ami           = data.aws_ami.ubuntu.id
   instance_type = "t2.micro"
   # Rendering both yml files
-  user_data     = data.template_cloudinit_config.myhost.rendered
+  user_data = data.template_cloudinit_config.myhost.rendered
 
   key_name = "marti"
   tags = {
@@ -60,7 +60,7 @@ data "template_cloudinit_config" "myhost" {
       keys = [
         for k in tls_private_key.host[*] : {
           # adding four spaces in front of the all lines of the private key and trimming tailing newlines chars
-          private   = indent(4, chomp(k.private_key_pem))
+          private = indent(4, chomp(k.private_key_pem))
           # trimming tailing newlines chars
           public    = chomp(k.public_key_openssh)
           algorithm = lower(k.algorithm)
@@ -69,4 +69,11 @@ data "template_cloudinit_config" "myhost" {
     })
   }
 }
+# Auto adding to local known_hosts
+resource "null_resource" "add_to_known_hosts" {
+  provisioner "local-exec" {
+    command = "echo '${aws_instance.web.public_ip} ${chomp(tls_private_key.host[1].public_key_openssh)}' >> ~/.ssh/known_hosts"
+  }
+}
+
 
