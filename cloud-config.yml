@@ -1,5 +1,7 @@
 #cloud-config
 hostname: martitest
+# adds the new hostname to /etc/hosts
+manage_etc_hosts: true
 
 system_info:
   default_user:
