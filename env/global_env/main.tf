@@ -1,3 +1,3 @@
 resource "random_pet" "server" {
-lentgh = 25
+length = 25
 }
